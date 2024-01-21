@@ -1,4 +1,8 @@
-const Web3 = require('web3');
+// Assuming Web3 is included via CDN in your HTML
+let web3;
+let paypalContract;
+let userAccount;
+
 const contractAbi = [
     {
       "inputs": [],
@@ -183,18 +187,14 @@ const contractAbi = [
       "type": "function",
       "constant": true
     }
-  ]; // Replace with your contract's ABI
-const contractAddress = '0x8F9c55d3df8CC9e8E42cee0DeB2CBEe42B7ff1C5'; // Replace with your deployed contract address
-
-let web3;
-let paypalContract;
-let userAccount;
+  ];
+const contractAddress = '0x232dEEcF1C39fBA71E38dFa3969BFA404802e403';
 
 window.addEventListener('load', async () => {
     if (window.ethereum) {
         web3 = new Web3(window.ethereum);
         try {
-            await window.ethereum.enable();
+            await window.ethereum.request({ method: 'eth_requestAccounts' }); // Updated line for MetaMask
             initApp();
         } catch (error) {
             console.error("User denied account access");
@@ -209,7 +209,6 @@ function initApp() {
 
     web3.eth.getAccounts().then(accounts => {
         userAccount = accounts[0];
-        // Additional initializations can be done here
     });
 
     document.getElementById('addNameBtn').addEventListener('click', addNameToWallet);
@@ -243,17 +242,29 @@ function createPaymentRequest() {
 }
 
 function payRequest() {
-    const requestId = document.getElementById('payRequestInput').value;
-    // Additional logic needed here to get the amount of the request
-    // For simplicity, let's assume it's already known
-    const amount = "0.1"; // Replace with actual amount for the request
-    paypalContract.methods.payRequest(requestId)
-        .send({from: userAccount, value: web3.utils.toWei(amount, 'ether')})
-        .then(result => {
-            console.log('Request paid:', result);
-        }).catch(error => {
-            console.error(error);
-        });
+    const toAddress = document.getElementById('payToAddressInput').value;
+    const amount = document.getElementById('payAmountInput').value; // Get amount from input
+
+    if (!web3.utils.isAddress(toAddress)) {
+        console.error("Invalid address");
+        return;
+    }
+
+    if (!amount || isNaN(amount) || amount <= 0) {
+        console.error("Invalid or empty amount");
+        return;
+    }
+
+    web3.eth.sendTransaction({
+        from: userAccount,
+        to: toAddress,
+        value: web3.utils.toWei(amount, 'ether'),
+        gas: 21000 // Standard gas limit for a simple transfer
+    }).then(result => {
+        console.log('Transaction successful:', result);
+    }).catch(error => {
+        console.error(error);
+    });
 }
 
 function viewMyRequests() {
