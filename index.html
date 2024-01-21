@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web3 PayPal</title>
+</head>
+<body>
+    <h1>Web3 PayPal System</h1>
+
+    <!-- Section to Add Name to Wallet -->
+    <section>
+        <h2>Add Name to Wallet</h2>
+        <input type="text" id="nameInput" placeholder="Enter your name">
+        <button id="addNameBtn">Add Name</button>
+    </section>
+
+    <!-- Section to Create a Request -->
+    <section>
+        <h2>Create a Payment Request</h2>
+        <input type="text" id="requestUserInput" placeholder="Enter user address">
+        <input type="number" id="requestAmountInput" placeholder="Enter amount">
+        <input type="text" id="requestMessageInput" placeholder="Enter message">
+        <button id="createRequestBtn">Create Request</button>
+    </section>
+
+    <!-- Section to Pay a Request -->
+    <section>
+        <h2>Pay a Request</h2>
+        <input type="number" id="payRequestInput" placeholder="Enter request ID">
+        <button id="payRequestBtn">Pay Request</button>
+    </section>
+
+    <!-- Section to View Requests and Transaction History -->
+    <section>
+        <h2>View Requests and Transaction History</h2>
+        <button id="viewRequestsBtn">View My Requests</button>
+        <button id="viewHistoryBtn">View My History</button>
+        <div id="requestsDisplay"></div>
+        <div id="historyDisplay"></div>
+    </section>
+
+    <script src="app.js"></script>
+</body>
+</html>
