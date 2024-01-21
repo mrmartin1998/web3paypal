@@ -188,19 +188,20 @@ const contractAbi = [
       "constant": true
     }
   ];
-const contractAddress = '0x232dEEcF1C39fBA71E38dFa3969BFA404802e403';
+const contractAddress = '0x39cBd1f7d24E43B001CAC9180Cc953627997d60e'; // Replace with your contract address
 
 window.addEventListener('load', async () => {
     if (window.ethereum) {
         web3 = new Web3(window.ethereum);
         try {
-            await window.ethereum.request({ method: 'eth_requestAccounts' }); // Updated line for MetaMask
+            // Request account access if needed
+            await window.ethereum.request({ method: 'eth_requestAccounts' });
             initApp();
         } catch (error) {
             console.error("User denied account access");
         }
     } else {
-        console.log('Non-Ethereum browser detected. Consider using MetaMask!');
+        console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
     }
 });
 
@@ -242,29 +243,21 @@ function createPaymentRequest() {
 }
 
 function payRequest() {
-    const toAddress = document.getElementById('payToAddressInput').value;
+    const requestId = document.getElementById('payRequestInput').value;
     const amount = document.getElementById('payAmountInput').value; // Get amount from input
-
-    if (!web3.utils.isAddress(toAddress)) {
-        console.error("Invalid address");
-        return;
-    }
 
     if (!amount || isNaN(amount) || amount <= 0) {
         console.error("Invalid or empty amount");
         return;
     }
 
-    web3.eth.sendTransaction({
-        from: userAccount,
-        to: toAddress,
-        value: web3.utils.toWei(amount, 'ether'),
-        gas: 21000 // Standard gas limit for a simple transfer
-    }).then(result => {
-        console.log('Transaction successful:', result);
-    }).catch(error => {
-        console.error(error);
-    });
+    paypalContract.methods.payRequest(requestId)
+        .send({from: userAccount, value: web3.utils.toWei(amount, 'ether'), gas: 1000000 })
+        .then(result => {
+            console.log('Request paid:', result);
+        }).catch(error => {
+            console.error(error);
+        });
 }
 
 function viewMyRequests() {
